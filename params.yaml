@@ -1,0 +1,33 @@
+data:
+  #ticker: "PETR4.SA"
+  ticker: "B3SA3.SA"
+  train_start: "2020-01-01"
+  train_end: "2025-12-30"
+  test_start: "2026-01-01"
+  test_end: "2026-03-12"
+  window_size: 90
+  features:
+    - "Open"
+    - "High"
+    - "Low"
+    - "Close"
+    - "Volume"
+  target: "Close"
+
+model:
+  lstm_layers:
+    - units: 100
+      return_sequences: true
+    - units: 50
+      return_sequences: true
+    - units: 50
+      return_sequences: true
+    - units: 50
+      return_sequences: false
+  dropout: 0.3
+  learning_rate: 0.001
+  epochs: 100
+  batch_size: 32
+  patience: 10
+  patience_lr: 5
+  lr_factor: 0.2

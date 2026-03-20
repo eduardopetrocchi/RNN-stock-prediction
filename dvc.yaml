@@ -1,0 +1,71 @@
+stages:
+  load_data:
+    cmd: python -m src.data_loading.load_data
+    deps:
+      - src/data_loading/load_data.py
+      - params.yaml
+    params:
+      - data.ticker
+      - data.train_start
+      - data.train_end
+      - data.test_start
+      - data.test_end
+      - data.features
+      - data.target
+      - data.window_size
+    outs:
+      - data/csv/df_train.csv
+      - data/csv/df_test.csv
+      - data/processed/X_train.npy
+      - data/processed/X_test.npy
+      - data/processed/y_train.npy
+      - data/processed/y_test.npy
+      - data/processed/dates_test.csv
+      - models/scaler.pkl
+      - models/scaler_target.pkl
+
+  train_model:
+    cmd: python -m src.model_training.train_model
+    deps:
+      - src/model_training/model_build.py
+      - src/model_training/train_model.py
+      - params.yaml
+      - data/processed/X_train.npy
+      - data/processed/X_test.npy
+      - data/processed/y_train.npy
+      - data/processed/y_test.npy
+      - models/scaler.pkl
+      - models/scaler_target.pkl
+    params:
+      - model.epochs
+      - model.batch_size
+      - model.dropout
+      - model.learning_rate
+      - model.lstm_layers
+      - model.patience
+      - model.patience_lr
+      - model.lr_factor
+    outs:
+      - models/model.keras
+
+    metrics:
+      - metrics/training.json:
+          cache: false
+
+  evaluate:
+    cmd: python -m src.model_evaluation.evaluate_model
+    deps:
+      - src/model_evaluation/evaluate_model.py
+      - models/model.keras
+      - models/scaler_target.pkl
+      - data/processed/X_test.npy
+      - data/processed/y_test.npy
+      - data/processed/dates_test.csv
+
+    outs:
+      - metrics/plots/predictions.png
+      - metrics/plots/training_history.png
+
+    metrics:
+      - metrics/evaluation.json:
+          cache: false

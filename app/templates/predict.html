@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prever · RNN Stock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #0a0e1a;
+      --surface: #111827;
+      --border:  #1e2d45;
+      --accent:  #00d4ff;
+      --accent2: #7c3aed;
+      --text:    #e2e8f0;
+      --muted:   #64748b;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 480px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .back {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 1.8rem;
+      transition: color 0.2s;
+    }
+    .back:hover { color: var(--accent); }
+
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .field {
+      margin-bottom: 1.4rem;
+    }
+
+    label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    input:focus { border-color: var(--accent); }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .hint {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 0.9rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    button:hover { opacity: 0.85; transform: translateY(-1px); }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 1.2rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
+
+    .dot { animation: blink 1.2s infinite; }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0; }
+      40%            { opacity: 1; }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <a href="/" class="back">← Início</a>
+    <h2>Gerar Previsão</h2>
+    <p class="subtitle">modelo LSTM · dados B3 via yfinance</p>
+
+    <form method="post" action="/predict" id="form">
+      <div class="field">
+        <label>Ticker</label>
+        <input
+          type="text"
+          name="ticker"
+          value="{{ default_ticker }}"
+          placeholder="ex: PETR4.SA"
+          required
+          autocomplete="off"
+        />
+        <p class="hint">Use o sufixo .SA para ações da B3</p>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Data Início</label>
+          <input type="date" name="start_date" required />
+        </div>
+        <div class="field">
+          <label>Data Fim</label>
+          <input type="date" name="end_date" required />
+        </div>
+      </div>
+
+      <button type="submit" id="btn">Prever →</button>
+      <div class="loading" id="loading">
+        Processando<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('form').addEventListener('submit', () => {
+      document.getElementById('btn').disabled = true;
+      document.getElementById('loading').style.display = 'block';
+    });
+
+    // Preencher data fim com hoje por padrão
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelector('[name="end_date"]').value = today;
+
+    // Preencher data início com 6 meses atrás
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    document.querySelector('[name="start_date"]').value = sixMonthsAgo.toISOString().split('T')[0];
+  </script>
+</body>
+</html>

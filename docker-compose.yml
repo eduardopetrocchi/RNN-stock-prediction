@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    container_name: rnn-stock
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./metrics:/app/metrics
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped

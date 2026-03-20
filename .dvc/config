@@ -1,0 +1,5 @@
+[core]
+    autostage = true
+    remote = rnn_stock_prediction
+['remote "rnn_stock_prediction"']
+    url = https://dagshub.com/eduardopetrocchi/RNN-stock-prediction

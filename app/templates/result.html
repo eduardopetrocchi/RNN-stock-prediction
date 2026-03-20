@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resultado · {{ ticker }} · RNN Stock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js"></script>
+  <style>
+    :root {
+      --bg:      #0a0e1a;
+      --surface: #111827;
+      --border:  #1e2d45;
+      --accent:  #00d4ff;
+      --accent2: #7c3aed;
+      --text:    #e2e8f0;
+      --muted:   #64748b;
+      --red:     #f87171;
+      --green:   #10b981;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.25;
+      z-index: 0;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1000px;
+      margin: 0 auto;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .back {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back:hover { color: var(--accent); }
+
+    .ticker-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 0.3rem 0.8rem;
+      border-radius: 2px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.3rem;
+    }
+
+    .period {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    /* ── Métricas ── */
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.2rem 1.4rem;
+    }
+
+    .metric-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-value {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .metric-value.r2 { color: var(--green); }
+    .metric-value.mape { color: var(--accent2); }
+
+    /* ── Gráfico ── */
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.5rem;
+    }
+
+    #chart { width: 100%; height: 420px; }
+
+    /* ── Erro ── */
+    .error-card {
+      background: var(--surface);
+      border: 1px solid #ef4444;
+      border-radius: 6px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .error-card p {
+      color: #f87171;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .btn-back {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.7rem 1.6rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: border-color 0.2s;
+    }
+    .btn-back:hover { border-color: var(--accent); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  {% if error %}
+  <!-- ── Estado de erro ── -->
+  <div class="error-card">
+    <p>{{ error }}</p>
+    <a href="/predict" class="btn-back">← Tentar novamente</a>
+  </div>
+
+  {% else %}
+  <!-- ── Header ── -->
+  <div class="header">
+    <a href="/predict" class="back">← Nova previsão</a>
+    <span class="ticker-badge">{{ ticker }}</span>
+  </div>
+
+  <h2>Resultado da Previsão</h2>
+  <p class="period">
+    {{ dates[0] }} → {{ dates[-1] }} · {{ dates | length }} pregões
+  </p>
+
+  <!-- ── Métricas ── -->
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="metric-label">MAE (R$)</div>
+      <div class="metric-value">{{ metrics.mae }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">RMSE (R$)</div>
+      <div class="metric-value">{{ metrics.rmse }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">R²</div>
+      <div class="metric-value r2">{{ metrics.r2 }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">MAPE (%)</div>
+      <div class="metric-value mape">{{ metrics.mape }}%</div>
+    </div>
+  </div>
+
+  <!-- ── Gráfico interativo ── -->
+  <div class="chart-card">
+    <div id="chart"></div>
+  </div>
+
+  <script>
+    const dates  = {{ dates  | tojson }};
+    const y_real = {{ y_real | tojson }};
+    const y_pred = {{ y_pred | tojson }};
+
+    const traceReal = {
+      x: dates, y: y_real,
+      type: 'scatter', mode: 'lines',
+      name: 'Preço Real',
+      line: { color: '#f87171', width: 2 },
+    };
+
+    const tracePred = {
+      x: dates, y: y_pred,
+      type: 'scatter', mode: 'lines',
+      name: 'Previsão LSTM',
+      line: { color: '#00d4ff', width: 2, dash: 'dot' },
+    };
+
+    const layout = {
+      paper_bgcolor: 'transparent',
+      plot_bgcolor:  'transparent',
+      font: { family: 'Space Mono, monospace', color: '#e2e8f0', size: 11 },
+      xaxis: {
+        gridcolor: '#1e2d45', showgrid: true,
+        tickfont: { size: 10 },
+      },
+      yaxis: {
+        gridcolor: '#1e2d45', showgrid: true,
+        tickprefix: 'R$ ',
+        tickfont: { size: 10 },
+      },
+      legend: {
+        orientation: 'h', y: -0.15,
+        font: { size: 11 },
+      },
+      margin: { t: 20, r: 20, b: 60, l: 70 },
+      hovermode: 'x unified',
+    };
+
+    const config = {
+      responsive: true,
+      displayModeBar: true,
+      modeBarButtonsToRemove: ['select2d', 'lasso2d'],
+      displaylogo: false,
+    };
+
+    Plotly.newPlot('chart', [traceReal, tracePred], layout, config);
+  </script>
+  {% endif %}
+
+</div>
+</body>
+</html>
