@@ -5,13 +5,13 @@ stages:
     deps:
     - path: params.yaml
       hash: md5
-      md5: 80c8684387eb797c6649ae356ec8fb2c
-      size: 593
+      md5: 6dc4e4a0884870bddbcabbbd5a51e94d
+      size: 571
       isexec: true
     - path: src/data_loading/load_data.py
       hash: md5
-      md5: e8cf604a7ecab62ff72f17d8e94acfcb
-      size: 7756
+      md5: b631489f15a90a99f0ae6ddc7b6f6ec6
+      size: 8091
       isexec: true
     params:
       params.yaml:
@@ -36,17 +36,17 @@ stages:
       isexec: true
     - path: data/csv/df_train.csv
       hash: md5
-      md5: 1c9b7079ffb8494399b3b72d2455e821
-      size: 141496
+      md5: 170a2011a517ce87158519078041e36e
+      size: 141518
       isexec: true
     - path: data/processed/X_test.npy
       hash: md5
-      md5: 3751e52f0d4a29383c8312012b2cccf7
+      md5: 1559f18b4bb9bd1329d3509095e04dba
       size: 169328
       isexec: true
     - path: data/processed/X_train.npy
       hash: md5
-      md5: 7c8ac93e153ad5648636a9678ace18b1
+      md5: 9ce7cb67480b3794865064693503d863
       size: 5050928
       isexec: true
     - path: data/processed/dates_test.csv
@@ -56,22 +56,22 @@ stages:
       isexec: true
     - path: data/processed/y_test.npy
       hash: md5
-      md5: 468e43b53e1ed02844221f96db9ed4ed
+      md5: 83f16b78de3f1d3688b7b6ebc7097580
       size: 504
       isexec: true
     - path: data/processed/y_train.npy
       hash: md5
-      md5: bf122980c89c78b921a602bc46e3c0b4
+      md5: da85ed7333b7fbb23d086435e78a37ab
       size: 11352
       isexec: true
     - path: models/scaler.pkl
       hash: md5
-      md5: efc736420765b6600c536b8ab9744c2d
+      md5: 2b4ceeb0845b065a6ea94014000b8c00
       size: 1167
       isexec: true
     - path: models/scaler_target.pkl
       hash: md5
-      md5: d1ede40cabfe50c7fd118b0e93f7ac09
+      md5: bc6f3af78d5b957f7a2742cc5664295d
       size: 719
       isexec: true
   train_model:
@@ -79,38 +79,38 @@ stages:
     deps:
     - path: data/processed/X_test.npy
       hash: md5
-      md5: 3751e52f0d4a29383c8312012b2cccf7
+      md5: 1559f18b4bb9bd1329d3509095e04dba
       size: 169328
       isexec: true
     - path: data/processed/X_train.npy
       hash: md5
-      md5: 7c8ac93e153ad5648636a9678ace18b1
+      md5: 9ce7cb67480b3794865064693503d863
       size: 5050928
       isexec: true
     - path: data/processed/y_test.npy
       hash: md5
-      md5: 468e43b53e1ed02844221f96db9ed4ed
+      md5: 83f16b78de3f1d3688b7b6ebc7097580
       size: 504
       isexec: true
     - path: data/processed/y_train.npy
       hash: md5
-      md5: bf122980c89c78b921a602bc46e3c0b4
+      md5: da85ed7333b7fbb23d086435e78a37ab
       size: 11352
       isexec: true
     - path: models/scaler.pkl
       hash: md5
-      md5: efc736420765b6600c536b8ab9744c2d
+      md5: 2b4ceeb0845b065a6ea94014000b8c00
       size: 1167
       isexec: true
     - path: models/scaler_target.pkl
       hash: md5
-      md5: d1ede40cabfe50c7fd118b0e93f7ac09
+      md5: bc6f3af78d5b957f7a2742cc5664295d
       size: 719
       isexec: true
     - path: params.yaml
       hash: md5
-      md5: 80c8684387eb797c6649ae356ec8fb2c
-      size: 593
+      md5: 6dc4e4a0884870bddbcabbbd5a51e94d
+      size: 571
       isexec: true
     - path: src/model_training/model_build.py
       hash: md5
@@ -119,8 +119,8 @@ stages:
       isexec: true
     - path: src/model_training/train_model.py
       hash: md5
-      md5: 746fb40d6fb6d97932d81e7509008fe0
-      size: 9302
+      md5: 60e0ec676a172c59d741779ee3bf602c
+      size: 9648
       isexec: true
     params:
       params.yaml:
@@ -143,12 +143,12 @@ stages:
     outs:
     - path: metrics/training.json
       hash: md5
-      md5: 52d2659188c4eabee1c4d0b234303ec1
-      size: 3013
+      md5: 52591cee1693901dddc2c2d99a738f7d
+      size: 2929
       isexec: true
     - path: models/model.keras
       hash: md5
-      md5: 8c7591d0e1cbf30ad1bac48281c9f841
+      md5: 0608571205131fba1f0fde92cdb5fd33
       size: 1414917
       isexec: true
   evaluate:
@@ -156,7 +156,7 @@ stages:
     deps:
     - path: data/processed/X_test.npy
       hash: md5
-      md5: 3751e52f0d4a29383c8312012b2cccf7
+      md5: 1559f18b4bb9bd1329d3509095e04dba
       size: 169328
       isexec: true
     - path: data/processed/dates_test.csv
@@ -166,37 +166,37 @@ stages:
       isexec: true
     - path: data/processed/y_test.npy
       hash: md5
-      md5: 468e43b53e1ed02844221f96db9ed4ed
+      md5: 83f16b78de3f1d3688b7b6ebc7097580
       size: 504
       isexec: true
     - path: models/model.keras
       hash: md5
-      md5: 8c7591d0e1cbf30ad1bac48281c9f841
+      md5: 0608571205131fba1f0fde92cdb5fd33
       size: 1414917
       isexec: true
     - path: models/scaler_target.pkl
       hash: md5
-      md5: d1ede40cabfe50c7fd118b0e93f7ac09
+      md5: bc6f3af78d5b957f7a2742cc5664295d
       size: 719
       isexec: true
     - path: src/model_evaluation/evaluate_model.py
       hash: md5
-      md5: 0bedc4a00c47e0cf0fae191220869f16
-      size: 8804
+      md5: 98bd7ff03a20d6b2383c9e240960d6e9
+      size: 9591
       isexec: true
     outs:
     - path: metrics/evaluation.json
       hash: md5
-      md5: edda2e3dc755b74d5449889580bdef34
-      size: 154
+      md5: 708001c1c1ed3ac06fb83f2f47fab900
+      size: 159
       isexec: true
     - path: metrics/plots/predictions.png
       hash: md5
-      md5: f6c0b51c3eb1b6f86e426c4298b89cd7
-      size: 53095
+      md5: 03260425facb9bd49f5975928783fb33
+      size: 52681
       isexec: true
     - path: metrics/plots/training_history.png
       hash: md5
-      md5: 3a4667bb0fff2d077d8f560b259c7ab3
-      size: 85125
+      md5: 524b92114633b7dca79f7435a47e3a88
+      size: 89919
       isexec: true

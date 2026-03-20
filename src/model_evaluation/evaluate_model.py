@@ -97,11 +97,11 @@ def evaluate_model(
     y_real = inverse_transform_prices(y_test, scaler_target)
     y_pred = inverse_transform_prices(y_pred_norm, scaler_target)
 
-    mae = float(mean_absolute_error(y_real, y_pred))
-    mse = float(mean_squared_error(y_real, y_pred))
-    rmse = float(np.sqrt(mse))
-    r2 = float(r2_score(y_real, y_pred))
-    mape = float(np.mean(np.abs((y_real - y_pred) / y_real)) * 100)
+    mae = round(float(mean_absolute_error(y_real, y_pred)), 4)
+    mse = round(float(mean_squared_error(y_real, y_pred)), 4)
+    rmse = round(float(np.sqrt(mse)), 4)
+    r2 = round(float(r2_score(y_real, y_pred)), 4)
+    mape = round(float(np.mean(np.abs((y_real - y_pred) / y_real)) * 100), 4)
 
     metrics = {
         "mae": mae,
@@ -255,8 +255,8 @@ def log_to_mlflow(metrics: dict) -> None:
                 }
             )
             mlflow.log_artifact("metrics/evaluation.json")
-            mlflow.log_artifact("metrics/predictions.png")
-            mlflow.log_artifact("metrics/training_history.png")
+            mlflow.log_artifact("metrics/plots/predictions.png")
+            mlflow.log_artifact("metrics/plots/training_history.png")
 
             print("Métricas e gráficos logados com sucesso no MLFlow.")
 
@@ -306,6 +306,13 @@ def main(overrides: dict = None) -> dict:
     log_to_mlflow(metrics)
 
     print("Avaliação concluída com sucesso!!")
+
+    return {
+        "metrics": metrics,
+        "dates": [str(d.date()) for d in dates_test],
+        "y_real": [round(float(v), 4) for v in y_real],
+        "y_pred": [round(float(v), 4) for v in y_pred],
+    }
 
 
 if __name__ == "__main__":

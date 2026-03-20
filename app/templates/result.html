@@ -198,19 +198,19 @@
   <div class="metrics">
     <div class="metric-card">
       <div class="metric-label">MAE (R$)</div>
-      <div class="metric-value">{{ metrics.mae }}</div>
+      <div class="metric-value">{{ "%.4f" | format(metrics.mae) }}</div>
     </div>
     <div class="metric-card">
       <div class="metric-label">RMSE (R$)</div>
-      <div class="metric-value">{{ metrics.rmse }}</div>
+      <div class="metric-value">{{ "%.4f" | format(metrics.rmse) }}</div>
     </div>
     <div class="metric-card">
       <div class="metric-label">R²</div>
-      <div class="metric-value r2">{{ metrics.r2 }}</div>
+      <div class="metric-value r2">{{ "%.4f" | format(metrics.r2) }}</div>
     </div>
     <div class="metric-card">
       <div class="metric-label">MAPE (%)</div>
-      <div class="metric-value mape">{{ metrics.mape }}%</div>
+      <div class="metric-value mape">{{ "%.2f" | format(metrics.mape) }}%</div>
     </div>
   </div>
 
@@ -257,6 +257,11 @@
       },
       margin: { t: 20, r: 20, b: 60, l: 70 },
       hovermode: 'x unified',
+      hoverlabel: {
+        bgcolor: '#ffffff',
+        bordercolor: '#e2e8f0',
+        font: { family: 'Space Mono, monospace', color: '#000000', size: 11 },
+      },
     };
 
     const config = {

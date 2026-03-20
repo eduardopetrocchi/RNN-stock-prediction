@@ -78,7 +78,7 @@ async def predict_post(
         name="result.html",
         context={
             "request": request,
-            "ticker": result["ticker"],
+            "ticker": ticker,
             "dates": result["dates"],
             "y_real": result["y_real"],
             "y_pred": result["y_pred"],

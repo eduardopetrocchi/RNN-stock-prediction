@@ -2,6 +2,7 @@
 .env
 
 # DVC — artefatos gerenciados pelo DVC, não pelo Git
+/data
 /data/csv/
 /data/processed/
 /models/

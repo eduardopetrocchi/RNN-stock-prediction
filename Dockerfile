@@ -10,15 +10,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Instalar Poetry
-#RUN pip install poetry
 
 # Copiar arquivos de dependências primeiro (cache do Docker)
 COPY pyproject.toml ./
 
-# Instalar dependências sem criar virtualenv (já estamos no container)
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -e .
+# Instalar dependências
+RUN pip install --no-cache-dir -e .
 
 # Copiar código fonte
 COPY . .

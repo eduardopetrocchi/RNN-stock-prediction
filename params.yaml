@@ -1,5 +1,4 @@
 data:
-  #ticker: "PETR4.SA"
   ticker: "B3SA3.SA"
   train_start: "2020-01-01"
   train_end: "2025-12-30"
