@@ -261,10 +261,19 @@ def log_to_mlflow(metrics: dict) -> None:
             print("Métricas e gráficos logados com sucesso no MLFlow.")
 
 
-def main() -> None:
+def main(overrides: dict = None) -> dict:
     """
     Executa o pipeline completo de avaliação: carga de dados, cálculo de
     métricas, geração de plots e persistência de logs (DVC e MLFow).
+
+    Args:
+        overrides (dict, optional): overrides (dict, optional): Parâmetros para sobrescrever os do params.yaml.
+            Aceita a chave 'ticker' para nomear corretamente os plots.
+            Quando None, usa exclusivamente o params.yaml (fluxo DVC).
+
+    Returns:
+        dict: Métricas de avaliação (mae, mse, rmse, r2, mape) e dados para o
+              template (dates, y_real, y_pred). Vazio se chamado pelo DVC.
     """
 
     print("=" * 60)
@@ -278,6 +287,8 @@ def main() -> None:
     # 2. Carregar parâmetros, modelos, dados e scaler
     params = load_params()
     model = load_model()
+    if overrides:
+        params["data"].update({k: v for k, v in overrides.items() if v is not None})
     X_test, y_test, dates_test = load_test_data()
     scaler_target = joblib.load("models/scaler_target.pkl")
     print(f"Dados carregados: {X_test.shape[0]} amostras de teste\n")

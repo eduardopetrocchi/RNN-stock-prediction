@@ -121,7 +121,7 @@ def train_model(
 
         # Logar os parâmetros
         mlflow.log_params(
-            {
+            params={
                 "ticker": params["data"]["ticker"],
                 "train_start": params["data"]["train_start"],
                 "train_end": params["data"]["train_end"],
@@ -257,13 +257,18 @@ def save_training_artifacts(
     print(f"Métricas salvas em: {metrics_path}")
 
 
-def main() -> None:
-    """
-    Ponto de entrada do pipeline de treinamento.
+def main(overrides: dict = None) -> None:
+    """Ponto de entrada do pipeline de treinamento.
 
     Orquestra o carregamento de parâmetros e dados, executa o treinamento
     e exibe o sumário final de performance no console.
+
+    Args:
+        overrides (dict, optional): Parâmetros para sobrescrever params.yaml.
+        Aceita as chaves 'ticker', 'test_start', 'test_end'.
+        Quando None, usa exclusivamente o params,yaml (fluxo DVC).
     """
+
     print("\n" + "=" * 60)
     print("INICIANDO TREINAMENTO DA RNN...")
     print("=" * 60)
@@ -271,6 +276,8 @@ def main() -> None:
     # 1. Carregar parâmetros
     print("\n1. Carregando parâmetros...")
     params = load_params()
+    if overrides:
+        params["data"].update({k: v for k, v in overrides.items() if v is not None})
     print("Parâmetros carregados!!")
 
     # 2. Carregador dados processos

@@ -191,15 +191,22 @@ def save_artifacts(
     )
 
 
-def main() -> None:
+def main(overrides: dict = None) -> None:
     """
     Executa o pipeline completo de download, normalização e geração de sequências.
     Orquestra desde o download via yfinance até a exportação dos artefatos
     prontos para o treinamento da RNN.
+
+    Args:
+        overrides (dict, optional): Parâmetros para sobrescrever params.yaml.
+        Aceita as chaves 'ticker','test_start' e 'test_end'.
+        Quando None, usa exclusivamente o params.yaml (fluxo DVC).
     """
 
     # 1. Carregar parâmetros
     params = load_params()
+    if overrides:
+        params.update({k: v for k, v in overrides.items() if v is not None})
 
     # 2. Download dos dados
     df_train, df_test = download_data(params=params)
