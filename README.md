@@ -219,3 +219,13 @@ Preço previsto (R$)
 | Serving | FastAPI + Jinja2 |
 | Visualização | Plotly.js |
 | Containerização | Docker |
+
+
+## Autor
+
+**Eduardo Petrocchi**  
+[linkedin.com/in/eduardopetrocchi](https://www.linkedin.com/in/eduardopetrocchi/)
+
+---
+
+<sub>Template HTML da interface web, README e formatação final assistidos por [Claude](https://claude.ai) (Anthropic).</sub>
