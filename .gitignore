@@ -3,7 +3,6 @@
 
 # DVC — artefatos gerenciados pelo DVC, não pelo Git
 /data/csv/
-data/csv/df_train.csv
 /data/processed/
 /models/
 /metrics/
