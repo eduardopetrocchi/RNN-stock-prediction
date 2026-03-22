@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "churn-prediction"
+name = "RNN-stock"
 version = "0.2.0"
 description = "RNN LSTM para previsão de preços de ações com MLOps (DVC + MLflow + DagsHub) e treinamento dinâmico"
 readme = "README.md"
